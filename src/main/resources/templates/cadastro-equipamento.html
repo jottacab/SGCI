@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Equipamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .card { border: none; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <h1>Cadastro de Equipamento</h1>
+        <p class="lead">Adicione novos ativos à frota</p>
+    </div>
+
+    <div class="container pb-5">
+        <form th:action="@{/equipamentos/salvar}" method="post" class="needs-validation" novalidate>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Novo Registro</h5>
+                </div>
+
+                <div class="card-body p-4">
+                    <h6 class="text-primary text-uppercase fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>Identificação</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome do Ativo *</label>
+                            <input type="text" name="nome" class="form-control" placeholder="Ex: Empilhadeira Yale 01" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Placa / Série *</label>
+                            <input type="text" name="placa" class="form-control" placeholder="ABC-0000" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Tipo *</label>
+                            <select name="tipo" class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="Automóvel">Automóvel</option>
+                                <option value="Empilhadeira">Empilhadeira</option>
+                                <option value="Paleteira">Paleteira</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h6 class="text-primary text-uppercase fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>Operacional</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Status Inicial</label>
+                            <select name="status" class="form-select">
+                                <option value="APTO">Apto</option>
+                                <option value="MANUTENCAO">Em Manutenção</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Data da Última Revisão</label>
+                            <input type="datetime-local" name="dataUltimaRevisao" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light p-3 d-flex justify-content-end gap-2">
+                    <a href="/equipamentos" class="btn btn-outline-secondary px-4">Cancelar</a>
+                    <button type="submit" class="btn btn-primary px-4 fw-bold">Salvar Equipamento</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

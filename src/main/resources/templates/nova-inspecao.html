@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nova Inspeção - Checklist Diário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 40px 0; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .checklist-group { margin-bottom: 25px; }
+        .checklist-item { padding: 12px 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; }
+        .checklist-item:hover { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <div class="container">
+            <i class="fas fa-clipboard-check fa-3x mb-3"></i>
+            <h1>Nova Inspeção Diária</h1>
+            <p class="lead">Preencha o checklist completo do equipamento</p>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-body p-5">
+                <div id="statusIndicator" class="alert mb-4" style="display:none;"></div>
+                
+                <form th:action="@{/inspecoes/salvar}" method="post" id="checklistForm">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Equipamento</label>
+                        <select class="form-select form-select-lg" name="equipamentoId" id="equipamentoSelect" required>
+                            <option value="">Selecione o equipamento...</option>
+                            <option th:each="equip : ${equipamentos}" 
+                                    th:value="${equip.id}" 
+                                    th:text="${equip.nome}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4" id="placaField" style="display: none;">
+                        <label class="form-label fw-bold">Placa do Veículo</label>
+                        <input type="text" class="form-control form-control-lg" name="placa" placeholder="ABC-1234" maxlength="8">
+                    </div>
+
+                    <h5 class="mb-4 text-primary"><i class="fas fa-tasks"></i> Checklist Completo</h5>
+
+                    <div class="checklist-group" data-group="Fluidos e Motor">
+                        <h6 class="mb-3">Fluidos e Motor</h6>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="oleo_motor" class="me-2"> Óleo do motor</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="arrefecimento" class="me-2"> Líquido de arrefecimento</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="fluido_freio" class="me-2"> Fluido de freio</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="direcao_hidraulica" class="me-2"> Fluido da direção hidráulica</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="limpador" class="me-2"> Água do limpador de para-brisa</div>
+                    </div>
+
+                    <div class="checklist-group" data-group="Pneus e Rodas">
+                        <h6 class="mb-3">Pneus e Rodas</h6>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="calibragem" class="me-2"> Calibragem dos pneus</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="desgaste" class="me-2"> Desgaste (TWI)</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="integridade" class="me-2"> Integridade (bolhas, cortes)</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="rodas" class="me-2"> Estado das rodas</div>
+                    </div>
+
+                    <div class="checklist-group" data-group="Sistema Elétrico e Iluminação">
+                        <h6 class="mb-3">Sistema Elétrico e Iluminação</h6>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="farois" class="me-2"> Faróis (baixa, alta e lanternas)</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="sinalizacao" class="me-2"> Sinalização (setas, freio, ré)</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="painel" class="me-2"> Luzes de advertência no painel</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="bateria" class="me-2"> Bateria e terminais</div>
+                    </div>
+
+                    <div class="checklist-group" data-group="Segurança e Visibilidade">
+                        <h6 class="mb-3">Segurança e Visibilidade</h6>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="palhetas" class="me-2"> Palhetas do limpador</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="cintos" class="me-2"> Cintos de segurança</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="kit_emergencia" class="me-2"> Kit de emergência (estepe, macaco, triângulo)</div>
+                    </div>
+
+                    <div class="checklist-group" data-group="Sistema de Frenagem">
+                        <h6 class="mb-3">Sistema de Frenagem</h6>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="pedal_freio" class="me-2"> Pedal de freio</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="freio_mao" class="me-2"> Freio de mão</div>
+                        <div class="checklist-item"><input type="checkbox" name="itens" value="torre_elevacao" class="me-2"> Torre de elevação</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Observações / Problemas Encontrados</label>
+                        <textarea class="form-control" name="observacoes" id="obsTextarea" rows="4"></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg"><i class="fas fa-save"></i> Salvar Inspeção</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const select = document.getElementById('equipamentoSelect');
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const statusDiv = document.getElementById('statusIndicator');
+        const obsTextarea = document.getElementById('obsTextarea');
+
+        function checkAptidao() {
+            const visiveis = Array.from(checkboxes).filter(c => c.offsetParent !== null);
+            let pendencias = [];
+
+            visiveis.forEach(cb => {
+                let existingIcon = cb.parentNode.querySelector('.fa-exclamation-triangle');
+                const labelTexto = cb.parentNode.textContent.trim();
+                
+                if (!cb.checked) {
+                    pendencias.push(labelTexto);
+                    if (!existingIcon) {
+                        const i = document.createElement('i');
+                        i.className = 'fas fa-exclamation-triangle text-warning ms-2';
+                        i.title = 'Checar manutenção: ' + labelTexto;
+                        cb.parentNode.appendChild(i);
+                    }
+                } else if (existingIcon) {
+                    existingIcon.remove();
+                }
+            });
+
+            // Atualiza o texto das observações mantendo o que o usuário escreveu manualmente
+            let textoManual = obsTextarea.value.replace(/\[PENDÊNCIA\]: .*?\n/g, "");
+            if (pendencias.length > 0) {
+                let novoTexto = "[PENDÊNCIA]: " + pendencias.join(", ") + "\n" + textoManual;
+                obsTextarea.value = novoTexto;
+            } else {
+                obsTextarea.value = textoManual;
+            }
+
+            const algumDesmarcado = visiveis.some(c => !c.checked);
+            statusDiv.style.display = 'block';
+            statusDiv.className = algumDesmarcado ? 'alert alert-danger' : 'alert alert-success';
+            statusDiv.innerHTML = algumDesmarcado ? '<strong>Status: INAPTO</strong> - Há itens pendentes.' : '<strong>Status: APTO</strong>';
+        }
+
+        select.addEventListener('change', function() {
+            const val = this.options[this.selectedIndex].text.toLowerCase();
+            const isPaleteira = val.includes('paleteira');
+            document.getElementById('placaField').style.display = val.includes('automotor') || val.includes('veículo') ? 'block' : 'none';
+
+            document.querySelectorAll('.checklist-group').forEach(group => {
+                const title = group.getAttribute('data-group');
+                if (isPaleteira) {
+                    const permitidos = ['Pneus e Rodas', 'Sistema Elétrico e Iluminação', 'Sistema de Frenagem'];
+                    group.style.display = permitidos.includes(title) ? 'block' : 'none';
+                    group.querySelectorAll('.checklist-item').forEach(item => {
+                        const cbVal = item.querySelector('input').value;
+                        const permitidosItens = ['rodas', 'bateria', 'freio', 'torre'];
+                        item.style.display = permitidosItens.some(p => cbVal.includes(p)) ? 'flex' : 'none';
+                    });
+                } else {
+                    group.style.display = 'block';
+                    group.querySelectorAll('.checklist-item').forEach(item => item.style.display = 'flex');
+                }
+            });
+            checkAptidao();
+        });
+
+        checkboxes.forEach(cb => cb.addEventListener('change', checkAptidao));
+    </script>
+</body>
+</html>
